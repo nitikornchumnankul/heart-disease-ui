@@ -26,9 +26,33 @@ export default function Home() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true); // Start loading when the form is submitted
+    
+    // Format formData to ensure correct types (e.g., convert strings to numbers)
+    const formattedData = {
+      age: Number(formData.age),
+      sex: Number(formData.sex),
+      cp: Number(formData.cp),
+      trestbps: Number(formData.trestbps),
+      chol: Number(formData.chol),
+      fbs: Number(formData.fbs),
+      restecg: Number(formData.restecg),
+      thalach: Number(formData.thalach),
+      exang: Number(formData.exang),
+      oldpeak: parseFloat(formData.oldpeak), // Ensuring float value
+      slope: Number(formData.slope),
+      ca: Number(formData.ca),
+      thal: Number(formData.thal)
+    };
+  
     try {
-      const response = await axios.post('http://119.59.103.209:8000/', formData);
-      setPredictionResult(response.data.result); // Update the result state with the prediction result
+      const response = await axios.post('http://119.59.103.209:8000/predict', formattedData, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        }
+      });
+  
+      setPredictionResult(response.data.prediction); // Update the result state with the prediction result
     } catch (error) {
       console.error('Error making prediction:', error);
       setPredictionResult('Error: Failed to fetch prediction');
