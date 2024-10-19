@@ -1,101 +1,130 @@
+"use client"; // Add this line at the top
+
 import Image from "next/image";
+import axios from 'axios';
+import { useState } from 'react';
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const [formData, setFormData] = useState({
+    age: '',
+    sex: '',
+    cp: '',
+    trestbps: '',
+    chol: '',
+    fbs: '',
+    restecg: '',
+    thalach: '',
+    exang: '',
+    oldpeak: '',
+    slope: '',
+    ca: '',
+    thal: ''
+  });
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const response = await axios.post('/api/predict', formData);
+      console.log('Prediction Result:', response.data.result);
+    } catch (error) {
+      console.error('Error making prediction:', error);
+    }
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+  return (
+    <div style={styles.container}>
+      <div style={styles.card}>
+        <h2>Heart Disease Prediction</h2>
+        <form onSubmit={handleSubmit} style={styles.form}>
+          <input type="number" name="age" placeholder="Age" value={formData.age} onChange={handleChange} style={styles.input} />
+          
+          {/* Radio buttons for sex */}
+          <div style={styles.radioGroup}>
+            <label>
+              <input
+                type="radio"
+                name="sex"
+                value="1"
+                checked={formData.sex === '1'}
+                onChange={handleChange}
+                style={styles.radioInput}
+              />
+              Male
+            </label>
+            <label>
+              <input
+                type="radio"
+                name="sex"
+                value="2"
+                checked={formData.sex === '2'}
+                onChange={handleChange}
+                style={styles.radioInput}
+              />
+              Female
+            </label>
+          </div>
+
+          <input type="number" name="cp" placeholder="Chest Pain (cp)" value={formData.cp} onChange={handleChange} style={styles.input} />
+          <input type="number" name="trestbps" placeholder="Resting Blood Pressure (trestbps)" value={formData.trestbps} onChange={handleChange} style={styles.input} />
+          <input type="number" name="chol" placeholder="Cholesterol (chol)" value={formData.chol} onChange={handleChange} style={styles.input} />
+          <input type="number" name="fbs" placeholder="Fasting Blood Sugar (fbs)" value={formData.fbs} onChange={handleChange} style={styles.input} />
+          <input type="number" name="restecg" placeholder="Resting ECG (restecg)" value={formData.restecg} onChange={handleChange} style={styles.input} />
+          <input type="number" name="thalach" placeholder="Max Heart Rate (thalach)" value={formData.thalach} onChange={handleChange} style={styles.input} />
+          <input type="number" name="exang" placeholder="Exercise Induced Angina (exang)" value={formData.exang} onChange={handleChange} style={styles.input} />
+          <input type="number" name="oldpeak" placeholder="Oldpeak" value={formData.oldpeak} onChange={handleChange} style={styles.input} />
+          <input type="number" name="slope" placeholder="Slope" value={formData.slope} onChange={handleChange} style={styles.input} />
+          <input type="number" name="ca" placeholder="Number of Major Vessels (ca)" value={formData.ca} onChange={handleChange} style={styles.input} />
+          <input type="number" name="thal" placeholder="Thalassemia (thal)" value={formData.thal} onChange={handleChange} style={styles.input} />
+          <button type="submit" style={styles.button}>Predict</button>
+        </form>
+      </div>
     </div>
   );
 }
+
+const styles = {
+  container: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: '100vh', 
+    backgroundColor: '#f0f0f0',
+  },
+  card: {
+    backgroundColor: '#fff',
+    padding: '2rem',
+    borderRadius: '8px',
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+    width: '400px',
+    textAlign: 'center',
+  },
+  form: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '1rem',
+  },
+  input: {
+    padding: '0.5rem',
+    borderRadius: '4px',
+    border: '1px solid #ccc',
+  },
+  button: {
+    padding: '0.75rem',
+    backgroundColor: '#0070f3',
+    color: '#fff',
+    border: 'none',
+    borderRadius: '4px',
+    cursor: 'pointer',
+  },
+  radioGroup: {
+    display: 'flex',
+    justifyContent: 'center',
+    gap: '1rem',
+  },
+  radioInput: {
+    marginRight: '0.5rem',
+  }
+};
