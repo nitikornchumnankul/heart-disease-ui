@@ -34,15 +34,14 @@ jobs:
         docker build -t nitikornchumnankul/heart-disease-ui:v1.0.${{ github.run_number }} .
         docker push nitikornchumnankul/heart-disease-ui:v1.0.${{ github.run_number }}
     
-    # - name: SSH to VM and deploy
-    #   uses: appleboy/ssh-action@v1.1.0
-    #   with:
-    #     host: ${{ secrets.VM_HOST }}
-    #     username: ${{ secrets.VM_USER }}
-    #     password: ${{ secrets.PASSWORD }}
-    #     port: 22
-    #     script: |
-    #       export version=v1.0.${{ github.run_number }}
-    #       cd ./heart-disease-ui
-    #       docker-compose down
-    #       docker-compose up -d
+    - name: SSH to VM and deploy
+      uses: appleboy/ssh-action@v1.1.0
+      with:
+        host: ${{ secrets.VM_HOST }}
+        username: ${{ secrets.VM_USER }}
+        password: ${{ secrets.PASSWORD }}
+        port: 22
+        script: |
+          export version=v1.0.${{ github.run_number }}
+          cd ./heart-disease-ui
+          docker-compose up -d
