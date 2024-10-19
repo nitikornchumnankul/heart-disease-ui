@@ -1,6 +1,5 @@
-"use client"; // Add this line at the top
+"use client"; // Add this line to ensure it's a Client Component
 
-import Image from "next/image";
 import axios from 'axios';
 import { useState } from 'react';
 
@@ -21,23 +20,32 @@ export default function Home() {
     thal: ''
   });
 
+  const [predictionResult, setPredictionResult] = useState<string | null>(null); // New state for the prediction result
+  const [loading, setLoading] = useState(false); // State to handle loading state
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true); // Start loading when the form is submitted
     try {
-      const response = await axios.post('/api/predict', formData);
-      console.log('Prediction Result:', response.data.result);
+      const response = await axios.post('http://119.59.103.209:8000/', formData);
+      setPredictionResult(response.data.result); // Update the result state with the prediction result
     } catch (error) {
       console.error('Error making prediction:', error);
+      setPredictionResult('Error: Failed to fetch prediction');
+    } finally {
+      setLoading(false); // Stop loading after the request completes
     }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
+
   return (
     <div style={styles.container}>
       <div style={styles.card}>
         <h2>Heart Disease Prediction</h2>
+        
         <form onSubmit={handleSubmit} style={styles.form}>
           <input type="number" name="age" placeholder="Age" value={formData.age} onChange={handleChange} style={styles.input} />
           
@@ -78,19 +86,29 @@ export default function Home() {
           <input type="number" name="slope" placeholder="Slope" value={formData.slope} onChange={handleChange} style={styles.input} />
           <input type="number" name="ca" placeholder="Number of Major Vessels (ca)" value={formData.ca} onChange={handleChange} style={styles.input} />
           <input type="number" name="thal" placeholder="Thalassemia (thal)" value={formData.thal} onChange={handleChange} style={styles.input} />
-          <button type="submit" style={styles.button}>Predict</button>
+          <button type="submit" style={styles.button} disabled={loading}>
+            {loading ? "Predicting..." : "Predict"}
+          </button>
         </form>
+        
+        {/* Conditionally display the prediction result */}
+        {predictionResult && (
+          <div style={styles.result}>
+            <h3>Prediction Result:</h3>
+            <p>{predictionResult}</p>
+          </div>
+        )}
       </div>
     </div>
   );
 }
 
-const styles = {
+const styles: { [key: string]: React.CSSProperties } = {
   container: {
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    height: '100vh', 
+    height: '100vh',
     backgroundColor: '#f0f0f0',
   },
   card: {
@@ -99,7 +117,7 @@ const styles = {
     borderRadius: '8px',
     boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
     width: '400px',
-    textAlign: 'center',
+    textAlign: 'center', // this is now correctly typed
   },
   form: {
     display: 'flex',
@@ -126,5 +144,12 @@ const styles = {
   },
   radioInput: {
     marginRight: '0.5rem',
-  }
+  },
+  result: {
+    marginTop: '1rem',
+    padding: '1rem',
+    backgroundColor: '#e0ffe0',
+    borderRadius: '8px',
+    border: '1px solid #0070f3',
+  },
 };
