@@ -117,6 +117,7 @@ export default function Home() {
         </form>
         <div className='h-10'></div>
         <Link href="/Login" type='submit' style={styles.button}>ไปยังหน้าเข้าสู่ระบบ</Link>
+        
         {/* Conditionally display the prediction result */}
         {predictionResult && (
           <div style={styles.result}>
