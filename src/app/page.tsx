@@ -1,9 +1,10 @@
-"use client"; 
+"use client";
 
 import axios from 'axios';
 import { useState } from 'react';
 import Image from 'next/image';
 import Navbar from './components/Navbar';
+import Link from 'next/link';
 
 export default function Home() {
   const [formData, setFormData] = useState({
@@ -22,12 +23,12 @@ export default function Home() {
     thal: ''
   });
 
-  const [predictionResult, setPredictionResult] = useState<string | null>(null); 
-  const [loading, setLoading] = useState(false); 
+  const [predictionResult, setPredictionResult] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true); 
+    setLoading(true);
 
     const formattedData = {
       age: Number(formData.age),
@@ -39,7 +40,7 @@ export default function Home() {
       restecg: Number(formData.restecg),
       thalach: Number(formData.thalach),
       exang: Number(formData.exang),
-      oldpeak: parseFloat(formData.oldpeak), 
+      oldpeak: parseFloat(formData.oldpeak),
       slope: Number(formData.slope),
       ca: Number(formData.ca),
       thal: Number(formData.thal)
@@ -53,12 +54,12 @@ export default function Home() {
         }
       });
 
-      setPredictionResult(response.data.prediction); 
+      setPredictionResult(response.data.prediction);
     } catch (error) {
       console.error('Error making prediction:', error);
       setPredictionResult('Error: Failed to fetch prediction');
     } finally {
-      setLoading(false); 
+      setLoading(false);
     }
   };
 
@@ -75,7 +76,7 @@ export default function Home() {
           <div style={styles.imageContainer}>
             <div style={styles.imageWrapper}>
               <Image
-                src="/hp.png" 
+                src="/hp.png"
                 alt="heart"
                 width={450}
                 height={400}
@@ -133,8 +134,10 @@ export default function Home() {
               <button type="submit" style={styles.button} disabled={loading}>
                 {loading ? "Predicting..." : "Predict"}
               </button>
-            </form>
-
+            </form><br />
+            <Link href="/Login" style={styles.button}>
+              Go to Login Page
+            </Link>
             {/* Conditionally display the prediction result */}
             {predictionResult && (
               <div style={styles.result}>
@@ -154,9 +157,9 @@ const styles: { [key: string]: React.CSSProperties } = {
     display: 'flex',
     justifyContent: 'space-between',
     height: '100vh',
-    backgroundColor: '#f0f0f0', 
+    backgroundColor: '#f0f0f0',
   },
-  leftPanel: { 
+  leftPanel: {
     backgroundColor: '#ffeb3b',
     width: '50%',
     display: 'flex',
@@ -166,7 +169,7 @@ const styles: { [key: string]: React.CSSProperties } = {
     padding: '20px',
   },
   rightPanel: {
-    backgroundColor: '#b2ebf2', 
+    backgroundColor: '#b2ebf2',
     width: '50%',
     display: 'flex',
     justifyContent: 'center',
@@ -185,7 +188,7 @@ const styles: { [key: string]: React.CSSProperties } = {
     textAlign: 'center',
   },
   imageWrapper: {
-    backgroundColor: '#fff', 
+    backgroundColor: '#fff',
     padding: '20px',
     borderRadius: '50px',
     display: 'inline-block',
@@ -193,7 +196,7 @@ const styles: { [key: string]: React.CSSProperties } = {
   },
   image: {
     borderRadius: '30px',
-    backgroundColor: '#b2ebf2', 
+    backgroundColor: '#b2ebf2',
   },
   form: {
     display: 'flex',
