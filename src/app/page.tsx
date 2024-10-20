@@ -1,6 +1,7 @@
 "use client"; // Add this line to ensure it's a Client Component
 
 import axios from 'axios';
+import Link from 'next/link';
 import { useState } from 'react';
 
 export default function Home() {
@@ -26,7 +27,7 @@ export default function Home() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true); // Start loading when the form is submitted
-    
+
     // Format formData to ensure correct types (e.g., convert strings to numbers)
     const formattedData = {
       age: Number(formData.age),
@@ -43,7 +44,7 @@ export default function Home() {
       ca: Number(formData.ca),
       thal: Number(formData.thal)
     };
-  
+
     try {
       const response = await axios.post('http://119.59.103.209:8000/predict', formattedData, {
         headers: {
@@ -51,7 +52,7 @@ export default function Home() {
           'Accept': 'application/json'
         }
       });
-  
+
       setPredictionResult(response.data.prediction); // Update the result state with the prediction result
     } catch (error) {
       console.error('Error making prediction:', error);
@@ -69,10 +70,10 @@ export default function Home() {
     <div style={styles.container}>
       <div style={styles.card}>
         <h2>Heart Disease Prediction</h2>
-        
+
         <form onSubmit={handleSubmit} style={styles.form}>
           <input type="number" name="age" placeholder="Age" value={formData.age} onChange={handleChange} style={styles.input} />
-          
+
           {/* Radio buttons for sex */}
           <div style={styles.radioGroup}>
             <label>
@@ -114,7 +115,8 @@ export default function Home() {
             {loading ? "Predicting..." : "Predict"}
           </button>
         </form>
-        
+        <div className='h-10'></div>
+        <Link href="/Login" type='submit' style={styles.button}>ไปยังหน้าเข้าสู่ระบบ</Link>
         {/* Conditionally display the prediction result */}
         {predictionResult && (
           <div style={styles.result}>
@@ -124,6 +126,8 @@ export default function Home() {
         )}
       </div>
     </div>
+
+    
   );
 }
 
